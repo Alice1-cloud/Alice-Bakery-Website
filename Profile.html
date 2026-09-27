@@ -1,0 +1,1397 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Profile | Alice's Bakery</title>
+
+    <link rel="stylesheet" href="Style.css">
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    <!-- SUPABASE -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+
+<body>
+
+    <!-- PROFILE PAGE -->
+
+    <main class="profile-page">
+
+        <!-- BACK TO HOME -->
+
+        <a href="index.html" class="profile-back-btn">
+            <i class="fa-solid fa-arrow-left"></i>
+            Back to Home
+        </a>
+
+
+        <!-- PROFILE HEADER -->
+
+        <section class="profile-header">
+
+            <div class="profile-avatar">
+                <i class="fa-regular fa-user"></i>
+            </div>
+
+            <div class="profile-welcome">
+
+                <p class="profile-label">
+                    ✦ WELCOME BACK ✦
+                </p>
+
+                <h1>
+                    Hello, <span id="profileWelcomeName">Alice!</span>
+                </h1>
+
+                <p>
+                    Welcome to your Alice's Bakery profile.
+                </p>
+
+            </div>
+
+        </section>
+
+
+        <!-- PROFILE CONTENT -->
+
+        <section class="profile-content">
+
+            <!-- PERSONAL INFORMATION -->
+
+            <div class="profile-card">
+
+                <div class="profile-card-heading">
+
+                    <div>
+                        <p class="profile-small-label">
+                            YOUR DETAILS
+                        </p>
+
+                        <h2>Personal Information</h2>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="edit-profile-btn">
+
+                        <i class="fa-solid fa-pen"></i>
+                        Edit
+
+                    </button>
+
+                </div>
+
+
+                <div class="profile-details">
+
+                    <div class="profile-detail">
+
+                        <i class="fa-regular fa-user"></i>
+
+                        <div>
+                            <span>Name</span>
+                            <strong id="profileName">
+                                Loading...
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-detail">
+
+                        <i class="fa-regular fa-envelope"></i>
+
+                        <div>
+                            <span>Email</span>
+                            <strong id="profileEmail">
+                                Loading...
+                            </strong>
+                        </div>
+
+                    </div>
+
+
+                    <div class="profile-detail">
+
+                        <i class="fa-solid fa-phone"></i>
+
+                        <div>
+                            <span>Phone</span>
+                            <strong id="profilePhone">
+                                Not added
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- ACCOUNT OPTIONS -->
+
+            <div class="profile-options">
+
+                <a href="Orders.html" class="profile-option">
+
+                    <div class="profile-option-icon">
+                        <i class="fa-solid fa-box-open"></i>
+                    </div>
+
+                    <div class="profile-option-text">
+                        <h3>My Orders</h3>
+                        <p>View your previous and current orders.</p>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right profile-arrow"></i>
+
+                </a>
+
+
+                <a href="favorites.html" class="profile-option">
+
+                    <div class="profile-option-icon">
+                        <i class="fa-regular fa-heart"></i>
+                    </div>
+
+                    <div class="profile-option-text">
+                        <h3>My Favorites</h3>
+                        <p>View cakes and treats you've saved.</p>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right profile-arrow"></i>
+
+                </a>
+
+
+                <a href="delivery.html" class="profile-option">
+
+                    <div class="profile-option-icon">
+                        <i class="fa-solid fa-location-dot"></i>
+                    </div>
+
+                    <div class="profile-option-text">
+                        <h3>Delivery Address</h3>
+                        <p>Manage your saved delivery address.</p>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right profile-arrow"></i>
+
+                </a>
+
+
+                <a href="settings.html" class="profile-option">
+
+                    <div class="profile-option-icon">
+                        <i class="fa-solid fa-gear"></i>
+                    </div>
+
+                    <div class="profile-option-text">
+                        <h3>Account Settings</h3>
+                        <p>Manage your account preferences.</p>
+                    </div>
+
+                    <i class="fa-solid fa-chevron-right profile-arrow"></i>
+
+                </a>
+
+            </div>
+
+
+            <!-- LOG OUT -->
+
+            <button
+                type="button"
+                class="profile-logout-btn">
+
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                Log Out
+
+            </button>
+
+        </section>
+
+    </main>
+
+
+<script>
+
+/* =====================================================
+   SUPABASE CONNECTION
+   ===================================================== */
+
+const SUPABASE_URL =
+    "https://zhewpkkghepxahfacnlq.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+        "sb_publishable_v4_Vtg2PZR1rGVQ1xyNx8g_ov7ZlW8r";
+
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+
+/* =====================================================
+   PAGE
+   ===================================================== */
+
+document.addEventListener(
+    "DOMContentLoaded",
+    async function () {
+
+
+    /* =================================================
+       GET ELEMENTS
+       ================================================= */
+
+    const editButton =
+        document.querySelector(
+            ".edit-profile-btn"
+        );
+
+    const logoutButton =
+        document.querySelector(
+            ".profile-logout-btn"
+        );
+
+    const nameBox =
+        document.getElementById(
+            "profileName"
+        );
+
+    const emailBox =
+        document.getElementById(
+            "profileEmail"
+        );
+
+    const phoneBox =
+        document.getElementById(
+            "profilePhone"
+        );
+
+    const welcomeName =
+        document.getElementById(
+            "profileWelcomeName"
+        );
+
+
+    /* =================================================
+       POPUP
+       ================================================= */
+
+    const popup =
+        document.createElement("div");
+
+    popup.id = "profilePopup";
+
+    popup.innerHTML = `
+
+        <div class="profile-popup-box">
+
+            <button
+                type="button"
+                class="profile-popup-close">
+                ×
+            </button>
+
+            <div class="profile-popup-icon">
+                <i class="fa-solid fa-user"></i>
+            </div>
+
+            <div class="profile-popup-label">
+                YOUR DETAILS
+            </div>
+
+            <h2>
+                Your profile is
+                <span>not complete yet</span>
+            </h2>
+
+            <p class="profile-popup-message">
+                Please enter your name before
+                saving your profile information.
+            </p>
+
+            <button
+                type="button"
+                class="profile-popup-ok">
+                OK, GOT IT
+            </button>
+
+        </div>
+
+    `;
+
+    document.body.appendChild(popup);
+
+
+    /* =================================================
+       POPUP STYLE
+       ================================================= */
+
+    const popupStyle =
+        document.createElement("style");
+
+    popupStyle.textContent = `
+
+        #profilePopup {
+
+            position: fixed;
+            inset: 0;
+
+            width: 100%;
+            height: 100%;
+
+            display: none;
+
+            align-items: center;
+            justify-content: center;
+
+            padding: 20px;
+
+            box-sizing: border-box;
+
+            background: rgba(55, 30, 40, 0.58);
+
+            z-index: 999999;
+
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+
+        }
+
+
+        #profilePopup.show {
+            display: flex;
+        }
+
+
+        .profile-popup-box {
+
+            position: relative;
+
+            width: 100%;
+            max-width: 390px;
+
+            box-sizing: border-box;
+
+            padding: 38px 28px 28px;
+
+            background: #ffffff;
+
+            border-radius: 28px;
+
+            text-align: center;
+
+            box-shadow:
+                0 20px 60px
+                rgba(70, 30, 45, 0.30);
+
+            animation:
+                profilePopupAnimation
+                0.25s ease;
+
+        }
+
+
+        @keyframes profilePopupAnimation {
+
+            from {
+
+                opacity: 0;
+
+                transform:
+                    translateY(20px)
+                    scale(0.95);
+
+            }
+
+            to {
+
+                opacity: 1;
+
+                transform:
+                    translateY(0)
+                    scale(1);
+
+            }
+
+        }
+
+
+        .profile-popup-close {
+
+            position: absolute;
+
+            top: 13px;
+            right: 13px;
+
+            width: 38px;
+            height: 38px;
+
+            border: none;
+
+            border-radius: 50%;
+
+            background: #fdebf2;
+
+            color: #a7466b;
+
+            font-size: 25px;
+
+            line-height: 1;
+
+            cursor: pointer;
+
+        }
+
+
+        .profile-popup-icon {
+
+            width: 70px;
+            height: 70px;
+
+            margin: 0 auto 18px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 50%;
+
+            background: #fdebf2;
+
+            color: #ae4b70;
+
+            font-size: 27px;
+
+        }
+
+
+        .profile-popup-label {
+
+            margin-bottom: 12px;
+
+            color: #b44e73;
+
+            font-size: 13px;
+
+            font-weight: bold;
+
+            letter-spacing: 3px;
+
+        }
+
+
+        .profile-popup-box h2 {
+
+            margin: 0;
+
+            color: #40242d;
+
+            font-family: Georgia, serif;
+
+            font-size: 29px;
+
+            line-height: 1.2;
+
+        }
+
+
+        .profile-popup-box h2 span {
+
+            display: block;
+
+            margin-top: 4px;
+
+            color: #ad456c;
+
+            font-style: italic;
+
+        }
+
+
+        .profile-popup-message {
+
+            margin: 20px auto 25px;
+
+            max-width: 320px;
+
+            color: #765e67;
+
+            font-size: 16px;
+
+            line-height: 1.6;
+
+        }
+
+
+        .profile-popup-ok {
+
+            width: 100%;
+
+            min-height: 53px;
+
+            border: none;
+
+            border-radius: 30px;
+
+            background: #ad456c;
+
+            color: #ffffff;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            letter-spacing: 1px;
+
+            cursor: pointer;
+
+        }
+
+
+        .profile-popup-ok:active {
+            transform: scale(0.98);
+        }
+
+
+        .profile-edit-input {
+
+            width: 100%;
+
+            box-sizing: border-box;
+
+            padding: 10px 12px;
+
+            border: 1px solid #e6b8c8;
+
+            border-radius: 10px;
+
+            outline: none;
+
+            font-size: 15px;
+
+            color: #40242d;
+
+            background: #fffafa;
+
+        }
+
+
+        .profile-edit-input:focus {
+
+            border-color: #ad456c;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(173, 69, 108, 0.10);
+
+        }
+
+
+        @media (max-width: 450px) {
+
+            .profile-popup-box {
+
+                max-width: 350px;
+
+                padding:
+                    35px
+                    23px
+                    25px;
+
+            }
+
+            .profile-popup-box h2 {
+                font-size: 27px;
+            }
+
+        }
+
+    `;
+
+    document.head.appendChild(
+        popupStyle
+    );
+
+
+    const popupMessage =
+        popup.querySelector(
+            ".profile-popup-message"
+        );
+
+    const popupClose =
+        popup.querySelector(
+            ".profile-popup-close"
+        );
+
+    const popupOK =
+        popup.querySelector(
+            ".profile-popup-ok"
+        );
+
+
+    function showProfilePopup(message) {
+
+        popupMessage.textContent =
+            message;
+
+        popup.classList.add("show");
+
+    }
+
+
+    function closeProfilePopup() {
+
+        popup.classList.remove("show");
+
+    }
+
+
+    popupClose.addEventListener(
+        "click",
+        closeProfilePopup
+    );
+
+
+    popupOK.addEventListener(
+        "click",
+        closeProfilePopup
+    );
+
+
+    popup.addEventListener(
+        "click",
+        function (event) {
+
+            if (event.target === popup) {
+
+                closeProfilePopup();
+
+            }
+
+        }
+    );
+
+
+    /* =================================================
+       GET LOGGED-IN USER
+       ================================================= */
+
+    const {
+        data: {
+            user
+        },
+        error: userError
+    } = await supabaseClient.auth.getUser();
+
+
+    /* =================================================
+       IF NOT LOGGED IN
+       ================================================= */
+
+    if (
+        userError ||
+        !user
+    ) {
+
+        window.location.href =
+            "login.html";
+
+        return;
+
+    }
+
+
+    /* =================================================
+       GET PROFILE FROM SUPABASE
+       ================================================= */
+
+    async function loadProfile() {
+
+        const {
+            data: profile,
+            error
+        } = await supabaseClient
+            .from("profiles")
+            .select("full_name, phone")
+            .eq("id", user.id)
+            .maybeSingle();
+
+
+        if (error) {
+
+            console.error(
+                "Profile error:",
+                error
+            );
+
+            showProfilePopup(
+                "We couldn't load your profile information. Please try again."
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * If the profile row exists,
+         * use it.
+         */
+
+        if (profile) {
+
+            const name =
+                profile.full_name ||
+                user.user_metadata?.full_name ||
+                "Alice";
+
+            const phone =
+                profile.phone ||
+                "";
+
+
+            nameBox.textContent =
+                name;
+
+            emailBox.textContent =
+                user.email || "No email";
+
+
+            phoneBox.textContent =
+                phone || "Not added";
+
+
+            welcomeName.textContent =
+                name + "!";
+
+            return;
+
+        }
+
+
+        /*
+         * If no profile row exists,
+         * create one automatically.
+         */
+
+        const name =
+            user.user_metadata?.full_name ||
+            "Alice";
+
+
+        const {
+            error: insertError
+        } = await supabaseClient
+            .from("profiles")
+            .insert({
+                id: user.id,
+                full_name: name,
+                phone: ""
+            });
+
+
+        if (insertError) {
+
+            console.error(
+                "Profile creation error:",
+                insertError
+            );
+
+            showProfilePopup(
+                "Your account was found, but your profile could not be created yet."
+            );
+
+            return;
+
+        }
+
+
+        nameBox.textContent =
+            name;
+
+        emailBox.textContent =
+            user.email || "No email";
+
+        phoneBox.textContent =
+            "Not added";
+
+        welcomeName.textContent =
+            name + "!";
+
+    }
+
+
+    await loadProfile();
+
+
+    /* =================================================
+       EDIT PROFILE
+       ================================================= */
+
+    editButton.addEventListener(
+        "click",
+        async function () {
+
+            if (
+                editButton.classList.contains(
+                    "editing"
+                )
+            ) {
+
+                await saveProfile();
+
+            } else {
+
+                editProfile();
+
+            }
+
+        }
+    );
+
+
+    function editProfile() {
+
+        const currentName =
+            nameBox.textContent === "Loading..."
+                ? ""
+                : nameBox.textContent;
+
+
+        const currentEmail =
+            emailBox.textContent === "No email"
+                ? ""
+                : emailBox.textContent;
+
+
+        const currentPhone =
+            phoneBox.textContent === "Not added"
+                ? ""
+                : phoneBox.textContent;
+
+
+        nameBox.innerHTML = `
+
+            <input
+                type="text"
+                id="profileNameInput"
+                class="profile-edit-input"
+                value="${escapeHTML(currentName)}"
+                placeholder="Enter your name"
+            >
+
+        `;
+
+
+        emailBox.innerHTML = `
+
+            <input
+                type="email"
+                id="profileEmailInput"
+                class="profile-edit-input"
+                value="${escapeHTML(currentEmail)}"
+                placeholder="Enter your email"
+                disabled
+            >
+
+        `;
+
+
+        phoneBox.innerHTML = `
+
+            <input
+                type="tel"
+                id="profilePhoneInput"
+                class="profile-edit-input"
+                value="${escapeHTML(currentPhone)}"
+                placeholder="Enter your phone number"
+            >
+
+        `;
+
+
+        editButton.innerHTML = `
+
+            <i class="fa-solid fa-check"></i>
+            Save
+
+        `;
+
+
+        editButton.classList.add(
+            "editing"
+        );
+
+
+        document
+            .getElementById(
+                "profileNameInput"
+            )
+            .focus();
+
+    }
+
+
+    /* =================================================
+       SAVE PROFILE
+       ================================================= */
+
+    async function saveProfile() {
+
+        const nameInput =
+            document.getElementById(
+                "profileNameInput"
+            );
+
+        const phoneInput =
+            document.getElementById(
+                "profilePhoneInput"
+            );
+
+
+        const name =
+            nameInput.value.trim();
+
+        const phone =
+            phoneInput.value.trim();
+
+
+        /* NAME EMPTY */
+
+        if (name === "") {
+
+            showProfilePopup(
+                "Please enter your name before saving your profile information."
+            );
+
+            nameInput.focus();
+
+            return;
+
+        }
+
+
+        /* =================================================
+           SAVE TO SUPABASE
+           ================================================= */
+
+        const {
+            error
+        } = await supabaseClient
+            .from("profiles")
+            .update({
+                full_name: name,
+                phone: phone
+            })
+            .eq("id", user.id);
+
+
+        if (error) {
+
+            console.error(
+                "Save profile error:",
+                error
+            );
+
+            showProfilePopup(
+                "Your profile could not be saved. Please try again."
+            );
+
+            return;
+
+        }
+
+
+        /* =================================================
+           DISPLAY SAVED DATA
+           ================================================= */
+
+        nameBox.innerHTML = `
+            <strong>
+                ${escapeHTML(name)}
+            </strong>
+        `;
+
+
+        emailBox.innerHTML = `
+            <strong>
+                ${escapeHTML(user.email || "No email")}
+            </strong>
+        `;
+
+
+        phoneBox.innerHTML = `
+
+            <strong>
+                ${escapeHTML(
+                    phone || "Not added"
+                )}
+            </strong>
+
+        `;
+
+
+        welcomeName.textContent =
+            name + "!";
+
+
+        editButton.innerHTML = `
+
+            <i class="fa-solid fa-pen"></i>
+            Edit
+
+        `;
+
+
+        editButton.classList.remove(
+            "editing"
+        );
+
+
+        showSuccessMessage();
+
+    }
+
+
+    /* =================================================
+       ESCAPE HTML
+       ================================================= */
+
+    function escapeHTML(text) {
+
+        return String(text)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+    }
+
+
+    /* =================================================
+       SUCCESS MESSAGE
+       ================================================= */
+
+    function showSuccessMessage() {
+
+        const success =
+            document.createElement("div");
+
+
+        success.textContent =
+            "✓ Profile saved successfully!";
+
+
+        success.style.cssText = `
+
+            position: fixed;
+
+            top: 25px;
+            left: 50%;
+
+            transform:
+                translateX(-50%);
+
+            z-index: 1000000;
+
+            background: #ad456c;
+
+            color: white;
+
+            padding:
+                14px
+                25px;
+
+            border-radius: 30px;
+
+            font-size: 14px;
+
+            font-weight: bold;
+
+            box-shadow:
+                0 10px 30px
+                rgba(80, 30, 50, .25);
+
+        `;
+
+
+        document.body.appendChild(
+            success
+        );
+
+
+        setTimeout(function () {
+
+            success.remove();
+
+        }, 2500);
+
+    }
+
+
+    /* =================================================
+       LOG OUT
+       ================================================= */
+
+    logoutButton.addEventListener(
+        "click",
+        function () {
+
+            const logoutPopup =
+                document.createElement("div");
+
+
+            logoutPopup.className =
+                "logout-popup";
+
+
+            logoutPopup.innerHTML = `
+
+                <div class="logout-popup-box">
+
+                    <button
+                        type="button"
+                        class="logout-popup-close"
+                        aria-label="Close">
+                        ×
+                    </button>
+
+
+                    <div class="logout-popup-icon">
+
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+
+                    </div>
+
+
+                    <p class="logout-popup-label">
+                        ALICE'S BAKERY ♡
+                    </p>
+
+
+                    <h2>
+                        Leaving so soon?
+                    </h2>
+
+
+                    <p class="logout-popup-text">
+
+                        Are you sure you want to log out
+                        of your Alice's Bakery profile?
+
+                    </p>
+
+
+                    <div class="logout-popup-buttons">
+
+                        <button
+                            type="button"
+                            class="logout-cancel-btn">
+
+                            Stay Logged In
+
+                        </button>
+
+
+                        <button
+                            type="button"
+                            class="logout-confirm-btn">
+
+                            Log Out
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            `;
+
+
+            document.body.appendChild(
+                logoutPopup
+            );
+
+
+            setTimeout(function () {
+
+                logoutPopup.classList.add(
+                    "show"
+                );
+
+            }, 10);
+
+
+            /* CLOSE */
+
+            const closeButton =
+                logoutPopup.querySelector(
+                    ".logout-popup-close"
+                );
+
+
+            closeButton.addEventListener(
+                "click",
+                closeLogoutPopup
+            );
+
+
+            /* CANCEL */
+
+            const cancelButton =
+                logoutPopup.querySelector(
+                    ".logout-cancel-btn"
+                );
+
+
+            cancelButton.addEventListener(
+                "click",
+                closeLogoutPopup
+            );
+
+
+            /* CONFIRM LOGOUT */
+
+            const confirmButton =
+                logoutPopup.querySelector(
+                    ".logout-confirm-btn"
+                );
+
+
+            confirmButton.addEventListener(
+                "click",
+                async function () {
+
+                    confirmButton.disabled =
+                        true;
+
+                    confirmButton.textContent =
+                        "Logging Out...";
+
+
+                    const {
+                        error
+                    } =
+                        await supabaseClient
+                        .auth
+                        .signOut();
+
+
+                    if (error) {
+
+                        console.error(
+                            "Logout error:",
+                            error
+                        );
+
+                        confirmButton.disabled =
+                            false;
+
+                        confirmButton.textContent =
+                            "Log Out";
+
+                        showProfilePopup(
+                            "We couldn't log you out. Please try again."
+                        );
+
+                        return;
+
+                    }
+
+
+                    /*
+                     * IMPORTANT:
+                     *
+                     * We DO NOT delete the
+                     * profile from Supabase.
+                     *
+                     * The customer's information
+                     * stays saved in their account.
+                     */
+
+                    window.location.href =
+                        "login.html";
+
+                }
+            );
+
+
+            /* CLICK OUTSIDE */
+
+            logoutPopup.addEventListener(
+                "click",
+                function (event) {
+
+                    if (
+                        event.target ===
+                        logoutPopup
+                    ) {
+
+                        closeLogoutPopup();
+
+                    }
+
+                }
+            );
+
+
+            function closeLogoutPopup() {
+
+                logoutPopup.classList.remove(
+                    "show"
+                );
+
+
+                setTimeout(function () {
+
+                    logoutPopup.remove();
+
+                }, 250);
+
+            }
+
+        }
+    );
+
+});
+
+
+/* =====================================================
+   THEME
+   ===================================================== */
+
+(function () {
+
+    const savedTheme =
+        localStorage.getItem(
+            "aliceTheme"
+        ) || "light";
+
+
+    document.body.classList.add(
+        "theme-" + savedTheme
+    );
+
+})();
+
+</script>
+
+</body>
+
+</html>

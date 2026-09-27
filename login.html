@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+    <title>Log In | Alice's Bakery</title>
+
+    <!-- Supabase -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+
+    <style>
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            min-height: 100vh;
+
+            font-family: Arial, sans-serif;
+
+            background: #fce3e8;
+
+            color: #30211e;
+
+            display: flex;
+
+            justify-content: center;
+
+            align-items: center;
+
+            padding: 25px 15px;
+        }
+
+
+        .login-container {
+
+            width: 100%;
+
+            max-width: 450px;
+        }
+
+
+        .back-home {
+
+            display: inline-block;
+
+            margin-bottom: 18px;
+
+            color: #a94364;
+
+            text-decoration: none;
+
+            font-size: 15px;
+
+            font-weight: bold;
+        }
+
+
+        .login-card {
+
+            background: #fffafa;
+
+            border-radius: 28px;
+
+            padding: 40px 30px;
+
+            box-shadow:
+                0 10px 35px
+                rgba(80, 40, 50, 0.12);
+        }
+
+
+        .bakery-name {
+
+            text-align: center;
+
+            font-family: Georgia, serif;
+
+            color: #a94364;
+
+            font-size: 28px;
+
+            margin-bottom: 8px;
+        }
+
+
+        .login-label {
+
+            text-align: center;
+
+            color: #d86686;
+
+            font-size: 12px;
+
+            letter-spacing: 3px;
+
+            margin-bottom: 10px;
+        }
+
+
+        h1 {
+
+            text-align: center;
+
+            font-family: Georgia, serif;
+
+            font-size: 40px;
+
+            color: #30211e;
+
+            margin-bottom: 8px;
+        }
+
+
+        .subtitle {
+
+            text-align: center;
+
+            color: #6f5b5b;
+
+            font-size: 15px;
+
+            line-height: 1.6;
+
+            margin-bottom: 18px;
+        }
+
+
+        .decoration {
+
+            text-align: center;
+
+            color: #d85f7d;
+
+            font-size: 20px;
+
+            margin-bottom: 25px;
+        }
+
+
+        .form-group {
+
+            margin-bottom: 20px;
+        }
+
+
+        label {
+
+            display: block;
+
+            margin-bottom: 7px;
+
+            color: #4a2924;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+
+        input {
+
+            width: 100%;
+
+            padding: 14px 15px;
+
+            border: 1px solid #e7b9c5;
+
+            border-radius: 12px;
+
+            background: white;
+
+            color: #30211e;
+
+            font-size: 15px;
+
+            outline: none;
+        }
+
+
+        input:focus {
+
+            border-color: #d85f7d;
+
+            box-shadow:
+                0 0 0 3px
+                rgba(216, 95, 125, 0.12);
+        }
+
+
+        .login-button {
+
+            width: 100%;
+
+            padding: 15px;
+
+            border: none;
+
+            border-radius: 25px;
+
+            background: #df6d91;
+
+            color: white;
+
+            font-size: 16px;
+
+            font-weight: bold;
+
+            cursor: pointer;
+
+            margin-top: 5px;
+        }
+
+
+        .login-button:hover {
+
+            background: #d85f7d;
+        }
+
+
+        .login-button:disabled {
+
+            opacity: 0.6;
+
+            cursor: not-allowed;
+        }
+
+
+        #message {
+
+            margin-top: 18px;
+        }
+
+
+        .success-message {
+
+            background: #e5f6e9;
+
+            color: #276738;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+
+        .error-message {
+
+            background: #fde5e5;
+
+            color: #9b3030;
+
+            padding: 12px;
+
+            border-radius: 10px;
+
+            text-align: center;
+
+            font-size: 14px;
+
+            line-height: 1.5;
+        }
+
+
+        .forgot-password {
+
+            text-align: center;
+
+            margin-top: 20px;
+        }
+
+
+        .forgot-password a {
+
+            color: #d85f7d;
+
+            text-decoration: none;
+
+            font-size: 14px;
+
+            font-weight: bold;
+        }
+
+
+        .signup-text {
+
+            text-align: center;
+
+            margin-top: 25px;
+
+            color: #6f5b5b;
+
+            font-size: 14px;
+        }
+
+
+        .signup-text a {
+
+            color: #d85f7d;
+
+            text-decoration: none;
+
+            font-weight: bold;
+        }
+
+
+        @media (max-width: 480px) {
+
+            .login-card {
+
+                padding: 32px 22px;
+            }
+
+
+            h1 {
+
+                font-size: 33px;
+            }
+
+
+            .bakery-name {
+
+                font-size: 25px;
+            }
+        }
+
+          .password-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.password-wrapper input {
+    width: 100%;
+    padding-right: 55px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+
+    width: 40px;
+    height: 40px;
+
+    border: none;
+    background: transparent;
+
+    color: #a94364;
+    font-size: 18px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    cursor: pointer;
+    padding: 0;
+}
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+    <div class="login-container">
+
+
+        <a href="index.html"
+            class="back-home">
+
+            ← Back to Home
+
+        </a>
+
+
+        <div class="login-card">
+
+
+            <div class="bakery-name">
+
+                Alice's Bakery
+
+            </div>
+
+
+            <div class="login-label">
+
+                ✦ WELCOME BACK ✦
+
+            </div>
+
+
+            <h1>
+
+                Log In
+
+            </h1>
+
+
+            <p class="subtitle">
+
+                Welcome back to Alice's Bakery.
+                We're happy to have you here. 💗
+
+            </p>
+
+
+            <div class="decoration">
+
+                ─── ♡ ───
+
+            </div>
+
+
+            <form id="login-form">
+
+
+                <div class="form-group">
+
+                    <label for="email">
+
+                        Email Address
+
+                    </label>
+
+
+                    <input
+                        type="email"
+                        id="email"
+                        placeholder="Enter your email address"
+                        required
+                    >
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="password">
+
+                        Password
+
+                    </label>
+
+                     <div class="password-wrapper">
+
+    <input
+        type="password"
+        id="password"
+        placeholder="Create a password"
+        minlength="6"
+        required
+    >
+
+    <button
+        type="button"
+        class="password-toggle"
+        onclick="togglePassword('password', this)"
+        aria-label="Show password">
+
+        👁️
+
+    </button>
+
+</div>
+                    
+                </div>
+
+
+                <button
+                    type="submit"
+                    class="login-button"
+                    id="login-button">
+
+                    Log In
+
+                </button>
+
+
+            </form>
+
+
+            <div id="message"></div>
+
+
+            <p class="forgot-password">
+
+                <a href="#"
+                    id="forgot-password">
+
+                    Forgot your password?
+
+                </a>
+
+            </p>
+
+
+            <p class="signup-text">
+
+                Don't have an account?
+
+                <a href="signup.html">
+
+                    Create Account
+
+                </a>
+
+            </p>
+
+
+        </div>
+
+    </div>
+
+
+
+    <script>
+
+
+        // ==========================================
+        // SUPABASE CONNECTION
+        // ==========================================
+
+        const SUPABASE_URL =
+            "https://zhewpkkghepxahfacnlq.supabase.co";
+
+
+        const SUPABASE_KEY =
+            "sb_publishable_v4_Vtg2PZR1rGVQ1xyNx8g_ov7ZlW8r";
+
+
+        const { createClient } =
+            supabase;
+
+
+        const supabaseClient =
+            createClient(
+                SUPABASE_URL,
+                SUPABASE_KEY
+            );
+
+
+
+        // ==========================================
+        // LOGIN
+        // ==========================================
+
+        const loginForm =
+            document.getElementById("login-form");
+
+
+        loginForm.addEventListener(
+            "submit",
+            async function(event) {
+
+                event.preventDefault();
+
+
+                const email =
+                    document.getElementById("email")
+                    .value
+                    .trim();
+
+
+                const password =
+                    document.getElementById("password")
+                    .value;
+
+
+                const button =
+                    document.getElementById("login-button");
+
+
+                const message =
+                    document.getElementById("message");
+
+
+                button.disabled = true;
+
+                button.textContent =
+                    "Logging in...";
+
+
+                message.innerHTML = "";
+
+
+                const { data, error } =
+                    await supabaseClient.auth
+                    .signInWithPassword({
+
+                        email: email,
+
+                        password: password
+
+                    });
+
+
+                if (error) {
+
+                    message.innerHTML =
+
+                        `<div class="error-message">
+                            ${error.message}
+                        </div>`;
+
+
+                    button.disabled = false;
+
+                    button.textContent =
+                        "Log In";
+
+                    return;
+                }
+
+
+                message.innerHTML =
+
+                    `<div class="success-message">
+                        Login successful! Welcome back. 💗
+                    </div>`;
+
+
+                setTimeout(function() {
+
+                    window.location.href =
+                       "index.html";
+
+                }, 1000);
+
+            });
+
+
+
+        // ==========================================
+        // FORGOT PASSWORD
+        // ==========================================
+
+        document
+            .getElementById("forgot-password")
+            .addEventListener(
+                "click",
+                async function(event) {
+
+                    event.preventDefault();
+
+
+                    const email =
+                        document.getElementById("email")
+                        .value
+                        .trim();
+
+
+                    const message =
+                        document.getElementById("message");
+
+
+                    if (!email) {
+
+                        message.innerHTML =
+
+                            `<div class="error-message">
+                                Please enter your email address first.
+                            </div>`;
+
+                        return;
+                    }
+
+
+                    const { error } =
+                        await supabaseClient.auth
+                        .resetPasswordForEmail(
+                            email,
+                            {
+                                redirectTo:
+                                    window.location.origin +
+                                    "/reset-password.html"
+                            }
+                        );
+
+
+                    if (error) {
+
+                        message.innerHTML =
+
+                            `<div class="error-message">
+                                ${error.message}
+                            </div>`;
+
+                    } else {
+
+                        message.innerHTML =
+
+                            `<div class="success-message">
+                                Password reset instructions
+                                have been sent to your email.
+                            </div>`;
+
+                    }
+
+                });
+
+                  // ==========================================
+// SHOW / HIDE PASSWORD
+// ==========================================
+
+function togglePassword(inputId, button) {
+
+    const input =
+        document.getElementById(inputId);
+
+    if (input.type === "password") {
+
+        input.type = "text";
+
+        button.textContent = "🙈";
+
+        button.setAttribute(
+            "aria-label",
+            "Hide password"
+        );
+
+    } else {
+
+        input.type = "password";
+
+        button.textContent = "👁️";
+
+        button.setAttribute(
+            "aria-label",
+            "Show password"
+        );
+
+    }
+
+}
+  
+
+    </script>
+
+
+</body>
+
+</html>
