@@ -11,6 +11,98 @@
 
     <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+<style>
+
+.login-required-popup {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+    padding: 20px;
+}
+
+.login-required-box {
+    width: 100%;
+    max-width: 390px;
+    background: #fffafa;
+    border-radius: 25px;
+    padding: 30px 25px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+    animation: popupAppear 0.25s ease;
+}
+
+.login-required-icon {
+    width: 65px;
+    height: 65px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background: #f8d8d8;
+    color: #d86686;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 28px;
+}
+
+.login-required-box h2 {
+    margin: 10px 0;
+    color: #30211e;
+    font-family: Georgia, serif;
+}
+
+.login-required-box p {
+    color: #6d5a58;
+    line-height: 1.6;
+    margin-bottom: 25px;
+}
+
+.login-popup-btn {
+    width: 100%;
+    border: none;
+    border-radius: 30px;
+    padding: 14px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.login-popup-login {
+    background: #d86686;
+    color: white;
+}
+
+.login-popup-signup {
+    background: #f8d8d8;
+    color: #b94f70;
+}
+
+.login-popup-close {
+    background: transparent;
+    color: #777;
+}
+
+@keyframes popupAppear {
+
+    from {
+        transform: scale(0.9);
+        opacity: 0;
+    }
+
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+
+}
+
+</style>
+  
 </head>
 
 <body>
@@ -115,6 +207,24 @@
 
     </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+
+const SUPABASE_URL =
+    "https://zhewpkkghepxahfacnlq.supabase.co";
+
+const SUPABASE_PUBLISHABLE_KEY =
+    "sb_publishable_v4_Vtg2PZR1rGVQ1xyNx8g_ov7ZlW8r";
+
+const supabaseClient =
+    supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_PUBLISHABLE_KEY
+    );
+
+</script>
+  
   <script>
 
     const searchInput =
@@ -685,13 +795,27 @@ searchInput.addEventListener(
     }
 );
 
-
 // =====================================
 // ADD TO CART
 // =====================================
 
-function addToCart(cakeName) {
+async function addToCart(cakeName) {
 
+    // Check if the customer is logged in
+    const { data: { user } } =
+        await supabaseClient.auth.getUser();
+
+
+    // NOT LOGGED IN
+    if (!user) {
+
+        showLoginRequiredPopup();
+
+        return;
+    }
+
+
+    // Find the cake
     const product =
         products.find(function(item) {
 
@@ -701,18 +825,28 @@ function addToCart(cakeName) {
 
 
     if (!product) {
+
+        console.log(
+            "Cake not found:",
+            cakeName
+        );
+
         return;
     }
 
 
+    // Use this user's own cart
+    const cartKey =
+        "cart_user_" + user.id;
+
+
     let cart =
         JSON.parse(
-            localStorage.getItem("cart")
+            localStorage.getItem(cartKey)
         ) || [];
 
 
     // Convert ₦42,000 to 42000
-
     const numericPrice =
         Number(
             product.price
@@ -750,16 +884,86 @@ function addToCart(cakeName) {
     }
 
 
+    // Save to this user's cart
     localStorage.setItem(
-        "cart",
+        cartKey,
         JSON.stringify(cart)
     );
 
 
+    // Show success message
     showCartMessage(cakeName);
 
 }
 
+    
+    // =====================================
+// LOGIN REQUIRED POPUP
+// =====================================
+
+function showLoginRequiredPopup() {
+
+    const existingPopup =
+        document.querySelector(".login-required-popup");
+
+    if (existingPopup) {
+        return;
+    }
+
+    const popup =
+        document.createElement("div");
+
+    popup.className =
+        "login-required-popup";
+
+    popup.innerHTML = `
+
+        <div class="login-required-box">
+
+            <div class="login-required-icon">
+                <i class="fa-solid fa-lock"></i>
+            </div>
+
+            <h2>Login Required</h2>
+
+            <p>
+                Please log in or create an account
+                before ordering a cake from
+                Alice's Bakery. 💕
+            </p>
+
+            <button
+                class="login-popup-btn login-popup-login"
+                onclick="window.location.href='login.html'">
+
+                <i class="fa-solid fa-right-to-bracket"></i>
+                LOG IN
+
+            </button>
+
+            <button
+                class="login-popup-btn login-popup-signup"
+                onclick="window.location.href='signup.html'">
+
+                <i class="fa-solid fa-user-plus"></i>
+                CREATE ACCOUNT
+
+            </button>
+
+            <button
+                class="login-popup-btn login-popup-close"
+                onclick="this.closest('.login-required-popup').remove()">
+
+                CANCEL
+
+            </button>
+
+        </div>
+
+    `;
+
+    document.body.appendChild(popup);
+}
 
 // =====================================
 // CART MESSAGE
