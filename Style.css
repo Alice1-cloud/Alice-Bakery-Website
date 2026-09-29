@@ -14112,6 +14112,20 @@ body.theme-blush .settings-heading-icon {
    SEARCH PAGE - DESKTOP ONLY
    ========================================= */
 
+/* =========================================
+   SEARCH PAGE - PHONE
+   ========================================= */
+
+@media (max-width: 999px) {
+
+    .search-results-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 28px !important;
+        max-width: 690px !important;
+    }
+
+}
+
 @media (min-width: 1000px) {
 
     .search-results-grid {
