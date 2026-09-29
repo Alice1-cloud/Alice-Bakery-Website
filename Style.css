@@ -14021,7 +14021,6 @@ body.theme-blush .settings-heading-icon {
 
 }
 
-  <style>
 
 .login-required-popup {
     position: fixed;
@@ -14108,4 +14107,54 @@ body.theme-blush .settings-heading-icon {
     }
 }
 
-</style>
+ 
+/* =========================================
+   SEARCH PAGE - DESKTOP ONLY
+   ========================================= */
+
+@media (min-width: 1000px) {
+
+    .search-results-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
+        max-width: 850px;
+        margin: 0 auto;
+    }
+
+    .search-product-card {
+        width: 100%;
+        background: #ffffff;
+        border-radius: 22px;
+        overflow: hidden;
+        text-align: center;
+        border: 1px solid #eadede;
+        box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+    }
+
+    .search-product-card img {
+        width: 100%;
+        height: 330px;
+        object-fit: cover;
+        display: block;
+    }
+
+    .search-product-card h3 {
+        margin: 24px 10px 18px;
+        font-family: Georgia, serif;
+        font-size: 30px;
+        line-height: 1.2;
+        font-weight: 500;
+        color: #30211e;
+    }
+
+    .search-product-card a {
+        display: inline-block;
+        margin-bottom: 28px;
+        color: #c96583;
+        font-size: 18px;
+        font-weight: bold;
+        text-decoration: none;
+    }
+
+}
